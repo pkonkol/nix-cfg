@@ -1,5 +1,5 @@
 {
-  description = "Your new nix config";
+  description = "My new nix config, from almost scratch";
 
   inputs = {
     # Nixpkgs
@@ -18,7 +18,7 @@
 
     # Shameless plug: looking for a way to nixify your themes and make
     # everything match nicely? Try nix-colors!
-    # nix-colors.url = "github:misterio77/nix-colors";
+    nix-colors.url = "github:misterio77/nix-colors";
   };
 
   outputs = {
@@ -36,6 +36,7 @@
       "aarch64-darwin"
       "x86_64-darwin"
     ];
+    pkgs = nixpkgs.legacyPackages.x86_64-linux;
     # This is a function that generates an attribute by calling a function you
     # pass to it, with each system as an argument
     forAllSystems = nixpkgs.lib.genAttrs systems;
@@ -43,6 +44,7 @@
     # Your custom packages
     # Acessible through 'nix build', 'nix shell', etc
     packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
+
     # Formatter for your nix files, available through 'nix fmt'
     # Other options beside 'alejandra' include 'nixpkgs-fmt'
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
@@ -59,8 +61,7 @@
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#your-hostname'
     nixosConfigurations = {
-      # FIXME replace with your hostname
-      your-hostname = nixpkgs.lib.nixosSystem {
+      nixos-vbox = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs outputs;};
         modules = [
           # > Our main nixos configuration file <
@@ -72,8 +73,7 @@
     # Standalone home-manager configuration entrypoint
     # Available through 'home-manager --flake .#your-username@your-hostname'
     homeConfigurations = {
-      # FIXME replace with your username@hostname
-      "your-username@your-hostname" = home-manager.lib.homeManagerConfiguration {
+      "freiherr@nixos-vbox" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
         extraSpecialArgs = {inherit inputs outputs;};
         modules = [
@@ -82,5 +82,25 @@
         ];
       };
     };
-  };
+
+    # this works with nix develop .#test
+    #test = pkgs.mkShell {
+    devShells.x86_64-linux.default = pkgs.mkShell {
+      NIX_CONFIG = "extra-experimental-features = nix-command flakes repl-flake";
+      nativeBuildInputs = with pkgs; [
+        nix
+        pkgs.home-manager
+        git
+
+        sops
+        ssh-to-age
+        gnupg
+        age
+
+        neovim
+        ranger
+        tmux
+      ];
+    };
+   };
 }
