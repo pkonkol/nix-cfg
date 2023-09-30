@@ -100,8 +100,35 @@
   time.timeZone = "Europe/Warsaw";
 
   environment.systemPackages = with pkgs; [
-    wget vim neovim git ranger tmux
+    wget vim neovim git ranger tmux home-manager
+    waybar dunst libnotify swww rofi-wayland chromium
+    kitty alacritty
   ];
+
+  # also conflicts with gnome
+  #xdg.portal.enable = true;
+  #xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  sound.enable = true;
+  security.rtkit.enable = true;
+  # conflicts with gnome
+  #services.pipewire = {
+  #  enable = true;
+  #  alsa.enable = true;
+  #  alsa.support32Bit = true;
+  #  pulse.enable = true;
+  #  jack.enable = true;
+  #};
+  # didn't boot up, got stuck
+  services.greetd.enable = false;
+  services.xserver.enable = true;
+  #services.xserver.displayManager.sddm.enable = true;
+  services.xserver.displayManager.gdm.enable = true;
+  services.xserver.desktopManager.gnome.enable = true;
+
+  programs.hyprland = { 
+    enable = true;
+    xwayland.enable = true;
+  };
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "23.05";

@@ -34,10 +34,10 @@ time.timeZone = "Europe/Warsaw";
 # \$ nix search wget
 environment.systemPackages = with pkgs; [
   wget vim neovim git 
+  waybar dunst libnotify
 ];
 
 networking.hostName = "nixos-vbox";
 # Enable the OpenSSH daemon.
 services.openssh.enable = true;
-
 }
