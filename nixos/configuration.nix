@@ -33,10 +33,8 @@
       outputs.overlays.additions
       outputs.overlays.modifications
       outputs.overlays.unstable-packages
-
       # You can also add overlays exported from other flakes:
       # neovim-nightly-overlay.overlays.default
-
       # Or define it inline, for example:
       # (final: prev: {
       #   hi = final.hello.overrideAttrs (oldAttrs: {
@@ -44,9 +42,7 @@
       #   });
       # })
     ];
-    # Configure your nixpkgs instance
     config = {
-      # Disable if you don't want unfree packages
       allowUnfree = true;
     };
   };
@@ -75,11 +71,12 @@
   #grub?
   boot.loader.grub.device = "/dev/sda";
 
-  # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
+  programs.fish.enable = true;
   users.users = {
     freiherr = {
       initialPassword = "changeme";
       isNormalUser = true;
+      shell = pkgs.fish;
       openssh.authorizedKeys.keys = [
         "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDFtOoE+UsKcjaWezmo7tIQnRjbO6D0MxVug5gCr15u1LYrE1Sxc0YjmR+6hqmX+0NiQEntbSBscTEbcjsl7TaaO70HKQqgcQ1Wq0BFzrXN/FrZKE1gWHR/dreupqNVkOIxTuXt6kr8vJ8fgh9NH9phQr9TWUt+YIj5f7d8883NkD1LUW+OI6IoE7rJPVd0vjJfMRQHrqFXzSrkymTcuciAqzJnnMMQQQe/VgWoTlH6s828UcWSDUa63/IxdLWoV2k2IcKMS18E7eFxeXZNU6z0ritP05auWUSMa0nm/Az4ptrqopW9C2G0biY8NVOUwk4DgKxXppniEOnR70wua5zYeUETSYo5TvvahQd621bttLSEf65CHFgceGy91tNmDOTTG8NM9Msil8i/x6tWKpiJZzWn1W25SZpaQmHGdLwDrwWFU21SgGMnT8LjfsU4cBu3JFkwQ59JyEqKmp/Nqdjp70UyLxxPiLpDmfSVFtHYA/p5ikAxLncRE+Bmq5R3Cz8="
       ];
@@ -94,15 +91,17 @@
     # Forbid root login through SSH.
     settings.PermitRootLogin = "no";
     # Use keys only. Remove if you want to SSH using password (not recommended)
-    settings.PasswordAuthentication = false;
+    settings.PasswordAuthentication = true;
   };
 
   time.timeZone = "Europe/Warsaw";
 
   environment.systemPackages = with pkgs; [
-    wget vim neovim git ranger tmux home-manager
+    wget vim neovim git ranger tmux home-manager exa jq bat zoxide fzf
     waybar dunst libnotify swww rofi-wayland chromium
     kitty alacritty
+    ripgrep fd sd
+    nixpkgs-fmt
   ];
 
   # also conflicts with gnome
@@ -125,6 +124,7 @@
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
 
+  # GUI PROGRAMS
   programs.hyprland = { 
     enable = true;
     xwayland.enable = true;
