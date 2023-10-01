@@ -10,6 +10,10 @@
 }: {
   # You can import other home-manager modules here
   imports = [
+    #./sway.nix
+    #./sway2.nix
+    # not working through home manager?
+    #./services.nix
     # If you want to use modules your own flake exports (from modules/home-manager):
     # outputs.homeManagerModules.example
 
@@ -61,10 +65,40 @@
 
   # Add stuff for your user as you see fit:
   # programs.neovim.enable = true;
-  home.packages = with pkgs; [ telegram-desktop ];
+  home.packages = with pkgs; [
+    # cli basic
+    wget
+    vim
+    git
+    ranger
+    tmux
+    exa
+    jq
+    bat
+    zoxide
+    fzf
+    grc
+    ripgrep
+    fd
+    sd
+    inxi 
+    # gui base
+    libnotify
+    waybar
+    dunst
+    swww
+    rofi-wayland
+    # gui tools
+    chromium
+    kitty
+    alacritty
+    telegram-desktop
+  ];
 
-  # Enable home-manager and git
   programs.home-manager.enable = true;
+
+  programs.direnv.enable = true;
+  programs.direnv.nix-direnv.enable = true;
 
   # CLI SETTINGS
 
@@ -87,20 +121,68 @@
   };
 
   programs = {
-     bat.enable = true;
-     zoxide.enable = true;
-     fzf.enable = true;
-     jq.enable = true;
-     htop.enable = true;
+    bat.enable = true;
+    zoxide.enable = true;
+    jq.enable = true;
+    htop.enable = true;
+    tealdeer.enable = true;
+    ncmpcpp.enable = true;
+    mpv.enable = true;
   };
 
+  programs.fzf = {
+    enable = true;
+    tmux.enableShellIntegration = true;
+  };
   programs.starship = {
     enable = true;
-    settings = { };
+    settings = {};
   };
 
   programs.fish = {
     enable = true;
+    plugins = [
+      {
+        name = "fzf-fish";
+        src = pkgs.fishPlugins.fzf-fish.src;
+      }
+      {
+        name = "grc";
+        src = pkgs.fishPlugins.grc.src;
+      }
+      {
+        name = "sponge";
+        src = pkgs.fishPlugins.sponge.src;
+      }
+      {
+        name = "foreign-env";
+        src = pkgs.fishPlugins.foreign-env.src;
+      }
+      {
+        name = "bass";
+        src = pkgs.fishPlugins.bass.src;
+      }
+      # conflicts with starship prompt
+      #{ name = "async-prompt"; src = pkgs.fishPlugins.async-prompt.src; }
+      {
+        name = "colored-man-pages";
+        src = pkgs.fishPlugins.colored-man-pages.src;
+      }
+    ];
+    shellAbbrs = {
+      cp = "cp -i";
+      mv = "mv -i";
+      rm = "rm -i";
+      ip = "ip -color=auto";
+      diff = "diff --color=auto";
+    };
+    shellInit = ''
+      fish_vi_key_bindings
+    '';
+  };
+
+  programs.atuin = {
+    enable = false;
   };
 
   programs.tmux = {
@@ -110,23 +192,32 @@
       tmuxPlugins.yank
       tmuxPlugins.vim-tmux-navigator
       tmuxPlugins.gruvbox
+      pkgs.tmuxPlugins.tmux-fzf
       # TODO how to add srcery-tmux here? is tpm still needed?
     ];
+    keyMode = "vi";
+    #terminal = "alacritty";
+    historyLimit = 10000;
+    newSession = true;
+    clock24 = true;
     extraConfig = ''
-	set-option -g mouse on
-	setw -g mode-keys vi
-	set -g default-terminal "tmux-256color"
-	bind-key v split-window -h
-	bind-key s split-window -v
-	bind-key h select-pane -L
-	bind-key j select-pane -D
-	bind-key k select-pane -U
-	bind-key l select-pane -R
+      set-option -g mouse on
+      setw -g mode-keys vi
+      set -g default-terminal "tmux-256color"
     '';
+    # bind-key v split-window -h
+    # bind-key s split-window -v
+    # bind-key h select-pane -L
+    # bind-key j select-pane -D
+    # bind-key k select-pane -U
+    # bind-key l select-pane -R
   };
 
   programs.neovim = {
     enable = true;
+    viAlias = true;
+    vimAlias = true;
+    vimdiffAlias = true;
     plugins = with pkgs.vimPlugins; [
       terminus
       gruvbox
@@ -135,10 +226,10 @@
       nvim-web-devicons
       {
         plugin = nvim-tree-lua;
-	type = "lua";
-	config = ''
-	  require("nvim-tree").setup()
-	'';
+        type = "lua";
+        config = ''
+          require("nvim-tree").setup()
+        '';
       }
       vim-nix
       vim-markdown
@@ -158,6 +249,19 @@
     enable = true;
     # srcery is in themes.json but suppsedly not in kitty-themes
     theme = "Gruvbox Dark";
+  };
+
+  wayland.windowManager.sway = {
+    enable = true;
+    config = rec {
+      modifier = "Mod4";
+      # Use kitty as default terminal
+      terminal = "kitty"; 
+      startup = [
+        # Launch Firefox on start
+        {command = "firefox";}
+      ];
+    };
   };
 
   # Nicely reload system units when changing configs
