@@ -63,6 +63,8 @@
     enable = true;
     enableSSHSupport = true;
   };
+  programs.thunar.enable = true;
+
   environment.systemPackages = with pkgs; [
     nixpkgs-fmt
     home-manager
@@ -76,6 +78,22 @@
     wlr-randr
     parted
   ];
+
+  fonts.fonts = with pkgs; [
+    terminus_font
+    terminus_font_ttf
+    (nerdfonts.override { fonts = [ "Terminus" "JetBrainsMono" "Noto" "FiraCode" ]; })
+    noto-fonts
+    noto-fonts-cjk
+    noto-fonts-emoji
+    liberation_ttf
+    fira-code
+    fira-code-symbols
+    mplus-outline-fonts.githubRelease
+    dina-font
+    proggyfonts
+  ];
+
   #environment.sessionVariables.NIXOS_OZONE_WL = "1";
   #services.xserver.enable = true;
   #services.xserver.displayManager.sddm.enable = true;
@@ -84,9 +102,12 @@
   xdg.portal = {
     enable = true;
     wlr.enable = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-wlr
+    ];
   };
   programs.sway.enable = true;
-  programs.hyprland.enable = true;
+  #programs.hyprland.enable = true;
 
   system.stateVersion = "23.05";
 
