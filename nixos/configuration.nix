@@ -70,7 +70,8 @@
     home-manager
     neovim
     wget
-    git
+    gitAndTools.gitFull
+    #git
     ranger
     tmux
     fish
@@ -86,12 +87,6 @@
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
-    liberation_ttf
-    fira-code
-    fira-code-symbols
-    mplus-outline-fonts.githubRelease
-    dina-font
-    proggyfonts
   ];
 
   #environment.sessionVariables.NIXOS_OZONE_WL = "1";
@@ -99,13 +94,17 @@
   #services.xserver.displayManager.sddm.enable = true;
   #services.xserver.displayManager.gdm.enable = false;
   #services.xserver.desktopManager.gnome.enable = true;
-  xdg.portal = {
-    enable = true;
-    wlr.enable = true;
-    extraPortals = with pkgs; [
-      xdg-desktop-portal-wlr
-    ];
+  xdg = {
+    portal = {
+      enable = true;
+      wlr.enable = true;
+      extraPortals = with pkgs; [
+        xdg-desktop-portal-wlr
+        xdg-desktop-portal-gtk
+      ];
+    };
   };
+
   programs.sway.enable = true;
   #programs.hyprland.enable = true;
 

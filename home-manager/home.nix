@@ -33,56 +33,9 @@
   # Add stuff for your user as you see fit:
   # programs.neovim.enable = true;
   home.packages = with pkgs; [
-    # cli basic
-    wget
-    vim
-    git
-    ranger
-    tmux
-    exa
-    jq
-    bat
-    zoxide
-    fzf
-    grc
-    yq-go
-    jc
-    ripgrep
-    fd
-    sd
-    inxi 
-    file
-    which
-    gnused
-    gnutar
-    gawk
-    zstd
-    # archives
-    zip xz unzip p7zip
-    # network
-    mtr iperf3 dnsutils ldns aria2 socat nmap ipcalc
-    # cli extra
-    glow
-    btop
-    iotop
-    iftop
-    # gui base
-    libnotify
-    waybar
-    dunst
-    swww
-    rofi-wayland
-    wofi
-    seatd
-    # gui tools
-    chromium
-    kitty
-    alacritty
-    telegram-desktop
     # nix
     nix-output-monitor
   ];
-
 
   services.syncthing = {
     enable = true;

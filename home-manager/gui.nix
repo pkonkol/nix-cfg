@@ -1,7 +1,25 @@
 { pkgs, ...}:
 {
   home.packages = with pkgs; [
+    # gui base
+    libnotify
+    seatd
+    # gui tools
+    pavucontrol
+    chromium
+    kitty
+    alacritty
+    telegram-desktop
+    zathura
+    # sway
     bemenu
+    rofi-wayland
+    swww
+    swaylock
+    swayidle
+    wl-clipboard
+    mako
+    yambar
   ];
 
   programs.kitty = {
@@ -65,11 +83,9 @@
       }];        
     };
   };
-  
-  services.redshift = {
+
+  services.wlsunset = {
     enable = true;
-    package = pkgs.gammastep;
-    #extraOptions = ["-v" "-m" "wayland"];
     latitude = "54.0";
     longitude = "18.0";
     temperature = { 
@@ -77,4 +93,15 @@
       night = 3500;
     };
   };
+#  services.redshift = {
+#    enable = true;
+#    package = pkgs.gammastep;
+#    #extraOptions = ["-v" "-m" "wayland"];
+#    latitude = "54.0";
+#    longitude = "18.0";
+#    temperature = { 
+#      day = 4500;
+#      night = 3500;
+#    };
+#  };
 }

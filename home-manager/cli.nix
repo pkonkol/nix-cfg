@@ -3,16 +3,51 @@
   home.shellAliases = rec {
     e = "nvim";
     g = "git";
-    l = "exa";
-    t = tree;
-    tree = "exa -T";
+    la = "exa -a";
   };
+
+  home.packages = with pkgs; [
+    # cli basic
+    wget
+    vim
+    ranger
+    tmux
+    exa
+    jq
+    bat
+    zoxide
+    fzf
+    grc
+    yq-go
+    jc
+    ripgrep
+    fd
+    sd
+    inxi 
+    file
+    which
+    gnused
+    gnutar
+    gawk
+    zstd
+    neofetch
+    # archives
+    zip xz unzip p7zip
+    # network
+    mtr iperf3 dnsutils ldns aria2 socat nmap ipcalc
+    # cli extra
+    glow
+    btop
+    iotop
+    iftop
+  ];
 
   programs.direnv.enable = true;
   programs.direnv.nix-direnv.enable = true;
 
   programs.git = {
     enable = true;
+    package = pkgs.gitAndTools.gitFull;
     userName = "Piotr Konkol";
     userEmail = "piotrkonkol01@gmail.com";
     aliases = {
@@ -26,6 +61,7 @@
     };
     extraConfig = {
       core.editor = "nvim";
+      credential.helper = "cache";
     };
   };
 
@@ -43,6 +79,16 @@
     enable = true;
     tmux.enableShellIntegration = true;
   };
+
+  # TODO change to eza, but home-manager has it on master not release-23.05
+  programs.exa = {
+    enable = true;
+    git = true;
+    icons = true;
+    enableAliases = true;
+    #extraOptions = {};
+  };
+
   programs.starship = {
     enable = true;
     settings = {
@@ -87,8 +133,8 @@
       cp = "cp -i";
       mv = "mv -i";
       rm = "rm -i";
-      ip = "ip -color=auto";
-      diff = "diff --color=auto";
+      #ip = "ip -color=auto";
+      #diff = "diff --color=auto";
     };
     shellInit = ''
       fish_vi_key_bindings
