@@ -71,13 +71,14 @@
     neovim
     wget
     gitAndTools.gitFull
-    #git
+    killall
     ranger
     tmux
     fish
     xorg.xrandr
     wlr-randr
     parted
+    ddcutil
   ];
 
   fonts.fonts = with pkgs; [

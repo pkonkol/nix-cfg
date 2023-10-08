@@ -1,5 +1,6 @@
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
+vim.opt.scrolloff = 7
 vim.opt.expandtab = true
 vim.cmd([[
 set nobackup
