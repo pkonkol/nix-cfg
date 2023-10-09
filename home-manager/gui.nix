@@ -80,12 +80,6 @@ in {
         style = "Regular";
         size = 10.0;
       };
-      output = {
-        VGA-1 = {
-          res = "1920x1080";
-          scale = "1";
-        };
-      };
       startup = [
         { command = "sh -c \"killall yambar; yambar &\""; always = true; }
         { command = "alacritty"; }
@@ -170,12 +164,12 @@ in {
   services.kanshi = {
     enable = true;
     profiles = {
-      vbox = {
+      virt = {
         outputs = [ 
           {
-            criteria = "VGA-1";
+            criteria = "Virtual-1";
             status = "enable";
-            mode = "1280x1024@60Hz";
+            mode = "1280x1024";
             position = "0,0";
           }
         ];

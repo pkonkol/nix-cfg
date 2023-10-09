@@ -58,7 +58,7 @@
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#your-hostname'
     nixosConfigurations = {
-      nixos-vbox = nixpkgs.lib.nixosSystem {
+      nixos-virt = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs outputs;};
         modules = [
           # > Our main nixos configuration file <
@@ -72,7 +72,7 @@
     homeConfigurations = {
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
-      "freiherr@nixos-vbox" = home-manager.lib.homeManagerConfiguration {
+      "freiherr@nixos-virt" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
         extraSpecialArgs = {inherit inputs outputs;};
         modules = [
