@@ -4,6 +4,7 @@ let
 in {
   imports = [
     ./gui/files.nix
+    ./vars.nix
   ];
   home.packages = with pkgs; [
     # gui base
@@ -71,6 +72,92 @@ in {
     };
   };
 
+  programs.i3status-rust = {
+    enable = true;
+    bars = {
+      default = {
+        blocks = [
+          {
+            block = "focused_window";
+            driver = "wlr_toplevel_management";
+            format = {
+              full = " $title.str(max_w:30) | Missing ";
+              short = " $title.str(max_w:15) | Missing ";
+            };
+          }
+          { # doesn't work despite mpd working TODO
+            block = "music";
+            player = "mdp";
+            click = [
+              {
+                button = "left";
+                action = "play_pause";
+              }
+            ];
+          }
+          {
+            alert = 10.0;
+            block = "disk_space";
+            info_type = "available";
+            interval = 60;
+            path = "/";
+            warning = 20.0;
+          }
+          {
+            block = "memory";
+            format = " $icon $mem_used_percents ";
+            format_alt = " $icon $swap_used_percents ";
+          }
+          #{ block = "amd_gpu"; }
+          {
+            block = "cpu";
+            interval = 1;
+          }
+          {
+            block = "load";
+            format = " $icon $1m ";
+            interval = 1;
+          }
+          #{ block = "bluetooth"; }
+          { 
+            block = "net"; 
+            format = "$icon $device:$ip ";
+          }
+          {
+            block = "external_ip";
+          }
+          {
+            block = "sound";
+            driver = "auto";
+          }
+          # this may support ddcutil, this would help a lot
+          #{ block = "backlight"; }
+          {
+            block = "time";
+            format = " $timestamp.datetime(f:'%a %d/%m %R') ";
+            interval = 60;
+          }
+          {
+            block = "menu";
+            text = "|power";
+            items = [
+              { display = " -&gt; Sleep &lt;-"; cmd = "systemctl suspend"; }
+              { display = " -&gt; Power off &lt;-"; cmd = "poweroff"; confirm_msg = "are you sure?"; }
+              { display = " -&gt; Reboot &lt;-"; cmd = "reboot"; confirm_msg = "are you sure?"; }
+            ];
+          }
+        ];
+        #settings = {
+        #  theme = {
+        #    theme = "srcery";
+        #  };
+        #};
+        icons = "material-nf";
+        theme = "srcery";
+      };
+    };
+  };
+
   wayland.windowManager.sway = {
     enable = true;
     xwayland = true;
@@ -86,7 +173,7 @@ in {
         size = 10.0;
       };
       startup = [
-        { command = "sh -c \"killall yambar; yambar &\""; always = true; }
+        #{ command = "sh -c \"killall yambar; yambar &\""; always = true; }
         { command = "alacritty"; }
       ];
       window = {
@@ -99,7 +186,12 @@ in {
           mode = "1200x1300";
         };
       };
-      bars = [ ];
+      bars = [ 
+        {
+          position = "top";
+          statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.home.homeDirectory}/.config/i3status-rust/config-default.toml";
+        }
+      ];
       keybindings = let
         modifier = config.wayland.windowManager.sway.config.modifier;
       in lib.mkOptionDefault {
