@@ -52,6 +52,10 @@
     };
   };
 
+  #something = {
+  #  huj = "12345";
+  #  test = "papiez";
+  #};
 
   home = {
     username = "freiherr";

@@ -39,6 +39,11 @@ in {
     mpv.enable = true;
   };
 
+  services.mpd = {
+    enable = true;
+    musicDirectory = "${config.home.homeDirectory}/Music" ;
+  };
+
   programs.kitty = {
     enable = true;
     # srcery is in themes.json but suppsedly not in kitty-themes
@@ -89,6 +94,12 @@ in {
         hideEdgeBorders = "smart";
         titlebar = false;
       };
+      output = {
+        Virtual-1 = {
+          mode = "1200x1300";
+        };
+      };
+      bars = [ ];
       keybindings = let
         modifier = config.wayland.windowManager.sway.config.modifier;
       in lib.mkOptionDefault {
@@ -107,7 +118,6 @@ in {
       colors = {};
       # add brightess control here?
       #keycodebindings = {};
-      bars = [ ];
       # modifier= "";
       #bars = [{
       #  position = "top";
@@ -169,7 +179,7 @@ in {
           {
             criteria = "Virtual-1";
             status = "enable";
-            mode = "1280x1024";
+            mode = "1200x1300";
             position = "0,0";
           }
         ];
