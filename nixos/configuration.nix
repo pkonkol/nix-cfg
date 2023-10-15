@@ -6,6 +6,7 @@
   lib,
   config,
   pkgs,
+  vars,
   ...
 }: {
   # You can import other NixOS modules here
@@ -22,7 +23,6 @@
 
     ./vbox.nix
     ./greetd.nix
-    #./sway.nix
 
     ./hardware-configuration.nix
   ];
@@ -33,9 +33,17 @@
   };
   hardware.i2c.enable = true;
 
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
+
   networking.hostName = "nixos-virt";
   networking.networkmanager.enable = true;
   #networking.useDHCP = false;
+
+  #virtualisation = {
+  #  docker.enable = true;
+  #  virtualbox.enable = true;
+  #};
 
   time.timeZone = "Europe/Warsaw";
 
@@ -91,6 +99,9 @@
 
   environment.systemPackages = with pkgs; [
     nixpkgs-fmt
+    alejandra
+    nixfmt
+    pkgs.unstable.nil
     home-manager
     neovim
     wget
@@ -103,16 +114,34 @@
     wlr-randr
     parted
     ddcutil
+    acpi
+    sysstat
+    lm_sensors
+    scrot
+    neofetch
+    xfce.thunar
+    unzip
+    tealdeer
+    htop
   ];
 
   fonts.fonts = with pkgs; [
     terminus_font
     terminus_font_ttf
-    (nerdfonts.override { fonts = [ "Terminus" "JetBrainsMono" "Noto" "FiraCode" ]; })
+    (nerdfonts.override {fonts = ["Terminus" "JetBrainsMono" "Noto" "FiraCode"];})
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
+    material-design-icons
+    font-awesome
   ];
+  fonts.enableDefaultFonts = false;
+  fonts.fontconfig.defaultFonts = {
+    serif = ["Noto Serif" "Noto Color Emoji"];
+    sansSerif = ["Noto Sans" "Noto Color Emoji"];
+    monospace = ["JetBrainsMono Nerd Font" "Noto Color Emoji"];
+    emoji = ["Noto Color Emoji"];
+  };
 
   #environment.sessionVariables.NIXOS_OZONE_WL = "1";
   #services.xserver.enable = true;

@@ -1,5 +1,9 @@
-{ config, pkgs, lib, ... }:
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
   services.mpd = {
     enable = true;
     musicDirectory = "/mnt/music";
@@ -15,5 +19,4 @@
   #  # https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/609
   #  XDG_RUNTIME_DIR = "/run/user/1000"; # User-id 1000 must match above user. MPD will look inside this directory for the PipeWire socket.
   #};
-
 }

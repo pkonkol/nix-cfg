@@ -1,5 +1,4 @@
-{ pkgs, ...}:
-{
+{pkgs, ...}: {
   home.shellAliases = rec {
     e = "nvim";
     g = "git";
@@ -12,7 +11,8 @@
     vim
     ranger
     tmux
-    exa
+    pkgs.unstable.eza
+    #exa
     jq
     bat
     zoxide
@@ -23,7 +23,7 @@
     ripgrep
     fd
     sd
-    inxi 
+    inxi
     file
     which
     gnused
@@ -32,9 +32,19 @@
     zstd
     neofetch
     # archives
-    zip xz unzip p7zip
+    zip
+    xz
+    unzip
+    p7zip
     # network
-    mtr iperf3 dnsutils ldns aria2 socat nmap ipcalc
+    mtr
+    iperf3
+    dnsutils
+    ldns
+    aria2
+    socat
+    nmap
+    ipcalc
     # cli extra
     glow
     btop
@@ -73,6 +83,9 @@
     tealdeer.enable = true;
     ncmpcpp.enable = true;
     mpv.enable = true;
+    go.enable = true;
+    chromium.enable = true;
+    firefox.enable = true;
   };
 
   programs.fzf = {
@@ -82,6 +95,7 @@
 
   # TODO change to eza, but home-manager has it on master not release-23.05
   programs.exa = {
+    package = pkgs.unstable.eza;
     enable = true;
     git = true;
     icons = true;
@@ -203,4 +217,3 @@
     '';
   };
 }
-

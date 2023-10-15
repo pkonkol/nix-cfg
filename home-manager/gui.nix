@@ -1,10 +1,12 @@
-{ pkgs, config, lib, ...}:
-let 
-  inherit (config.colorscheme) colors;
-in {
+{
+  pkgs,
+  config,
+  lib,
+  vars,
+  ...
+}: {
   imports = [
     ./gui/files.nix
-    ./vars.nix
   ];
   home.packages = with pkgs; [
     # gui base
@@ -32,6 +34,8 @@ in {
     gammastep
     sway-contrib.grimshot
     kanshi
+    # hgmmm
+    playerctl
   ];
 
   programs = {
@@ -40,15 +44,25 @@ in {
     mpv.enable = true;
   };
 
-  services.mpd = {
-    enable = true;
-    musicDirectory = "${config.home.homeDirectory}/Music" ;
+  services = {
+    playerctld.enable = true;
   };
 
-  programs.kitty = {
+  services.mpd = {
     enable = true;
-    # srcery is in themes.json but suppsedly not in kitty-themes
-    theme = "Gruvbox Dark";
+    musicDirectory = "${config.home.homeDirectory}/Music";
+  };
+
+  programs.chromium = {
+    enable = true;
+    extensions = [
+      {id = "dbepggeogbaibhgnhhndojpepiihcmeb";} # Vimium
+      {id = "oboonakemofpalcgghocfoadofidjkkk";} # KeePassXC-Browser
+      {id = "cjpalhdlnbpafiamejdnhcphjbkeiagm";} # Ublock Origin
+      {id = "gcbommkclmclpchllfjekcdonpmejbdp";} # HTTPS everywhere
+      {id = "mmpokgfcmbkfdeibafoafkiijdbfblfg";} # Merge windows
+      {id = "agldajbhchobfgjcmmigehfdcjbmipne";} # Blank Dark New Tab
+    ];
   };
 
   programs.alacritty = {
@@ -62,6 +76,11 @@ in {
           family = "Terminus";
           style = "Regular";
         };
+        opacity = 0.85;
+        padding = {
+          x = 1;
+          y = 1;
+        };
         offset.y = 2;
         draw_bold_text_with_bright_colors = true;
         live_config_reload = true;
@@ -69,6 +88,37 @@ in {
       scrolling.history = 10000;
       scrolling.multiplier = 5;
       selection.save_to_clipboard = true;
+      cursor = {style = "Beam";};
+      colors = with vars.colors; {
+        primary = {
+          background = "0x${black}";
+          foreground = "0x${brightwhite}";
+        };
+        cursor = {
+          text = "0x${black}";
+          cursor = "0x${yellow}";
+        };
+        normal = {
+          black = "0x${black}";
+          red = "0x${red}";
+          green = "0x${green}";
+          yellow = "0x${yellow}";
+          blue = "0x${blue}";
+          magenta = "0x${magenta}";
+          cyan = "0x${cyan}";
+          white = "0x${white}";
+        };
+        bright = {
+          black = "0x${brightblack}";
+          red = "0x${brightred}";
+          green = "0x${brightgreen}";
+          yellow = "0x${brightyellow}";
+          blue = "0x${brightblue}";
+          magenta = "0x${brightmagenta}";
+          cyan = "0x${brightcyan}";
+          white = "0x${brightwhite}";
+        };
+      };
     };
   };
 
@@ -85,7 +135,8 @@ in {
               short = " $title.str(max_w:15) | Missing ";
             };
           }
-          { # doesn't work despite mpd working TODO
+          {
+            # doesn't work despite mpd working TODO
             block = "music";
             player = "mdp";
             click = [
@@ -119,8 +170,8 @@ in {
             interval = 1;
           }
           #{ block = "bluetooth"; }
-          { 
-            block = "net"; 
+          {
+            block = "net";
             format = "$icon $device:$ip ";
           }
           {
@@ -141,9 +192,20 @@ in {
             block = "menu";
             text = "|power";
             items = [
-              { display = " -&gt; Sleep &lt;-"; cmd = "systemctl suspend"; }
-              { display = " -&gt; Power off &lt;-"; cmd = "poweroff"; confirm_msg = "are you sure?"; }
-              { display = " -&gt; Reboot &lt;-"; cmd = "reboot"; confirm_msg = "are you sure?"; }
+              {
+                display = " -&gt; Sleep &lt;-";
+                cmd = "systemctl suspend";
+              }
+              {
+                display = " -&gt; Power off &lt;-";
+                cmd = "poweroff";
+                confirm_msg = "are you sure?";
+              }
+              {
+                display = " -&gt; Reboot &lt;-";
+                cmd = "reboot";
+                confirm_msg = "are you sure?";
+              }
             ];
           }
         ];
@@ -168,13 +230,13 @@ in {
       #menu = "bemenu-run --binding vim -i";
       menu = "rofi -show combi";
       fonts = {
-        names = [ "Terminus" "Terminus (TTF)" ]; #"DejaVu Sans Mono" ];
+        names = ["Terminus" "Terminus (TTF)"]; #"DejaVu Sans Mono" ];
         style = "Regular";
         size = 10.0;
       };
       startup = [
         #{ command = "sh -c \"killall yambar; yambar &\""; always = true; }
-        { command = "alacritty"; }
+        {command = "alacritty";}
       ];
       window = {
         border = 1;
@@ -183,47 +245,102 @@ in {
       };
       output = {
         Virtual-1 = {
-          mode = "1200x1300";
+          mode = "${vars.defaultResolution}";
         };
       };
-      bars = [ 
+      bars = [
         {
           position = "top";
           statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.home.homeDirectory}/.config/i3status-rust/config-default.toml";
+          colors = {
+            statusline = "#${vars.colors.white}";
+            background = "#${vars.colors.black}";
+            separator = "#${vars.colors.yellow}";
+            inactiveWorkspace = {
+              border = "#${vars.colors.brightblack}";
+              background = "#${vars.colors.xgray2}";
+              text = "#${vars.colors.white}";
+            };
+            activeWorkspace = {
+              border = "#${vars.colors.yellow}";
+              background = "#${vars.colors.black}";
+              text = "#${vars.colors.yellow}";
+            };
+            focusedWorkspace = {
+              border = "#${vars.colors.red}";
+              background = "#${vars.colors.black}";
+              text = "#${vars.colors.yellow}";
+            };
+            urgentWorkspace = {
+              border = "#${vars.colors.red}";
+              background = "#${vars.colors.black}";
+              text = "#${vars.colors.red}";
+            };
+            bindingMode = {
+              border = "#${vars.colors.green}";
+              background = "#${vars.colors.black}";
+              text = "#${vars.colors.white}";
+            };
+          };
         }
       ];
       keybindings = let
         modifier = config.wayland.windowManager.sway.config.modifier;
-      in lib.mkOptionDefault {
-        "${modifier}+x" = "kill";
-        "${modifier}+bracketleft" = "exec --no-startup-id grimshot --notify  save area /tmp/scrot-$(date \"+%Y-%m-%d\"T\"%H:%M:%S\").png";
-        "${modifier}+bracketright" = "exec --no-startup-id grimshot --notify  copy area";
-        "${modifier}+Shift+Ctrl+l" = "exec loginctl lock-session";
-        "XF86MonBrightnessDown" = "exec ddcutil -d 1 '- 10'";
-        "XF86MonBrightnessUp" = "exec ddcutil -d 1 '+ 10'";
-        "XF86AudioRaiseVolume" = "exec 'pactl set-sink-volume @DEFAULT_SINK@ +1%'";
-        "XF86AudioLowerVolume" = "exec 'pactl set-sink-volume @DEFAULT_SINK@ -1%'";
-        "XF86AudioMute" = "exec 'pactl set-sink-mute @DEFAULT_SINK@ toggle'";
+      in
+        lib.mkOptionDefault {
+          "${modifier}+x" = "kill";
+          "${modifier}+Shift+Escape" = "exec xkill";
+          "${modifier}+bracketleft" = "exec --no-startup-id grimshot --notify  save area /tmp/scrot-$(date \"+%Y-%m-%d\"T\"%H:%M:%S\").png";
+          "${modifier}+bracketright" = "exec --no-startup-id grimshot --notify  copy area";
+          "${modifier}+Shift+Ctrl+l" = "exec loginctl lock-session";
+          "XF86MonBrightnessDown" = "exec ddcutil -d 1 '- 10'";
+          "XF86MonBrightnessUp" = "exec ddcutil -d 1 '+ 10'";
+          "XF86AudioRaiseVolume" = "exec 'pactl set-sink-volume @DEFAULT_SINK@ +1%'";
+          "XF86AudioLowerVolume" = "exec 'pactl set-sink-volume @DEFAULT_SINK@ -1%'";
+          "XF86AudioMute" = "exec 'pactl set-sink-mute @DEFAULT_SINK@ toggle'";
+          "XF86AudioNext" = "exec playerctl next";
+          "XF86AudioPlay" = "exec playerctl play-pause";
+          "XF86AudioPrev" = "exec playerctl previous";
+          "XF86AudioStop" = "exec playerctl stop";
+          "Print" = "exec --no-startup-id grimshot --notify  save area /tmp/scrot-$(date \"+%Y-%m-%d\"T\"%H:%M:%S\").png";
+        };
+      colors = let
+        c = vars.colors;
+      in {
+        focused = {
+          background = "#${c.black}";
+          border = "#${c.red}";
+          childBorder = "#${c.brightred}";
+          indicator = "#${c.yellow}";
+          text = "#${c.yellow}";
+        };
+
+        focusedInactive = {
+          background = "#${c.black}";
+          border = "#${c.red}";
+          childBorder = "#${c.brightred}";
+          indicator = "#${c.brightyellow}";
+          text = "#${c.white}";
+        };
+
+        unfocused = {
+          background = "#${c.xgray2}";
+          border = "#${c.orange}";
+          childBorder = "#${c.brightorange}";
+          indicator = "#${c.brightorange}";
+          text = "#${c.white}";
+        };
+
+        urgent = {
+          background = "#${c.hardblack}";
+          border = "#${c.magenta}";
+          childBorder = "#${c.brightmagenta}";
+          indicator = "#${c.magenta}";
+          text = "#${c.yellow}";
+        };
       };
       # TODO
       #assigns = { "1: web" = [{ class = "^Firefox$"; }]; };
-      colors = {};
-      # add brightess control here?
-      #keycodebindings = {};
-      # modifier= "";
-      #bars = [{
-      #  position = "top";
-      #  statusCommand = "while date +'%Y-%m-%d %l:%M:%S %p'; do sleep 1; done";
-      #  colors = {
-      #    statusline = "#ffffff";
-      #    background = "#323232";
-      #    inactiveWorkspace = {
-      #      border = "#32323200";
-      #      background = "#32323200";
-      #      text = "#5c5c5c";
-      #    };
-      #  };
-      #}];        
     };
   };
 
@@ -234,15 +351,31 @@ in {
     location = "top-left";
     terminal = "alacritty";
     theme = "srcery_rofi.rasi";
+    # TODO theme it directly here
+    #theme = with vars.colors; {
+    #  "window" = {
+    #    background = "#${black}";
+    #    foreground = "#${brightwhite}";
+    #    separator = "#${blue}";
+    #    border = 2;
+    #  };
+    #};
   };
 
   programs.swaylock = {
     enable = true;
     package = pkgs.swaylock-effects;
-    settings = {
-      color = "1c1b19";
+    settings = with vars.colors; {
+      color = "${black}";
+      line-color = "${white}";
+      ring-color = "${green}";
+      text-color = "${white}";
+      inside-wrong-color = "${red}";
+      bs-hl-color = "${magenta}";
+      layout-text-color = "${white}";
+      indicator-radius = 100;
       font-size = 24;
-      line-color = "ffffff";
+      font = "${vars.font}";
       deamonize = true;
       clock = true;
       ignore-empty-password = true;
@@ -267,11 +400,11 @@ in {
     enable = true;
     profiles = {
       virt = {
-        outputs = [ 
+        outputs = [
           {
             criteria = "Virtual-1";
             status = "enable";
-            mode = "1200x1300";
+            mode = "${vars.defaultResolution}";
             position = "0,0";
           }
         ];
@@ -283,12 +416,23 @@ in {
     enable = true;
     defaultTimeout = 5000;
     font = "Terminus 10";
+    anchor = "top-right";
+    backgroundColor = "#${vars.colors.black}";
+    borderColor = "#${vars.colors.red}";
+    textColor = "#${vars.colors.brightwhite}";
+    borderRadius = 3;
+    borderSize = 1;
+    height = 200;
+    width = 300;
+    icons = true;
+    margin = "10";
+    padding = "5";
   };
 
   systemd.user.services.autotiling = {
     Install = {
-      WantedBy = [ "sway-session.target" ];
-      PartOf = [ "graphical-session.target" ];
+      WantedBy = ["sway-session.target"];
+      PartOf = ["graphical-session.target"];
     };
     Service = {
       ExecStart = "${pkgs.autotiling-rs}/bin/autotiling-rs";
@@ -310,7 +454,7 @@ in {
   #  enable = true;
   #  latitude = "54.0";
   #  longitude = "18.0";
-  #  temperature = { 
+  #  temperature = {
   #    day = 4500;
   #    night = 3500;
   #  };

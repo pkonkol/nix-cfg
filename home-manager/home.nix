@@ -6,56 +6,22 @@
   lib,
   config,
   pkgs,
+  vars,
   ...
-}: {
-  # You can import other home-manager modules here
+}: let
+  huj = builtins.trace "huj1234" "";
+in {
   imports = [
     ./cli.nix
     ./gui.nix
-    #./sway.nix
-    #./sway2.nix
-    # not working through home manager?
-    #./services.nix
+
     # If you want to use modules your own flake exports (from modules/home-manager):
     # outputs.homeManagerModules.example
-
     # Or modules exported from other flakes (such as nix-colors):
-    inputs.nix-colors.homeManagerModules.default
-
-    # You can also split up your configuration and import pieces of it here: ./nvim.nix
+    #inputs.nix-colors.homeManagerModules.default
   ];
-
-  #colorscheme = inputs.nix-colors.colorschemes.gruvbox-dark-hard;
-  # TODO add srcery to forked https://github.com/tinted-theming/base16-schemes
-  # TMP srcery  
-  colorScheme = {
-    slug = "srcery";
-    name = "Srcery";
-    author = "";
-    colors = {
-      base00 = "#271C3A";
-      base01 = "#100323";
-      base02 = "#3E2D5C";
-      base03 = "#5D5766";
-      base04 = "#BEBCBF";
-      base05 = "#DEDCDF";
-      base06 = "#EDEAEF";
-      base07 = "#BBAADD";
-      base08 = "#A92258";
-      base09 = "#918889";
-      base0A = "#804ead";
-      base0B = "#C6914B";
-      base0C = "#7263AA";
-      base0D = "#8E7DC6";
-      base0E = "#953B9D";
-      base0F = "#59325C";
-    };
-  };
-
-  #something = {
-  #  huj = "12345";
-  #  test = "papiez";
-  #};
+  # shit didnt work fuck
+  #vars = import ./vars.nix;
 
   home = {
     username = "freiherr";
@@ -73,7 +39,6 @@
   services.syncthing = {
     enable = true;
   };
-
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   home.stateVersion = "23.05";
