@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{pkgs, globals, ...}: {
   home.shellAliases = rec {
     e = "nvim";
     g = "git";
@@ -212,7 +212,7 @@
     ];
     extraConfig = ''
       lua << EOF
-      ${builtins.readFile ./neovim.lua}
+      ${builtins.readFile ./cli/neovim.lua}
       EOF
     '';
   };

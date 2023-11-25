@@ -2,7 +2,7 @@
   config,
   pkgs,
   lib,
-  vars,
+  globals,
   ...
 }:
 with lib; let
@@ -46,10 +46,10 @@ in {
             # ~/.mozilla/firefox/pinpox/bookmarks.html
             # "browser.bookmarks.file" =
 
-            "browser.display.background_color" = "#${vars.colors.black}";
-            "browser.display.foreground_color" = "#${vars.colors.white}";
+            "browser.display.background_color" = "#${globals.colors.black}";
+            "browser.display.foreground_color" = "#${globals.colors.white}";
             "browser.display.use_system_colors" = "true";
-            "browser.anchor_color" = "#${vars.colors.yellow}";
+            "browser.anchor_color" = "#${globals.colors.yellow}";
             "browser.display.use_document_colors" = "false";
             # "browser.search.region" = "GB";
             # "browser.search.isUS" = false;

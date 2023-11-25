@@ -2,7 +2,7 @@
   pkgs,
   config,
   lib,
-  vars,
+  globals,
   ...
 }: {
   imports = [
@@ -89,7 +89,7 @@
       scrolling.multiplier = 5;
       selection.save_to_clipboard = true;
       cursor = {style = "Beam";};
-      colors = with vars.colors; {
+      colors = with globals.colors; {
         primary = {
           background = "0x${black}";
           foreground = "0x${brightwhite}";
@@ -245,7 +245,7 @@
       };
       output = {
         Virtual-1 = {
-          mode = "${vars.defaultResolution}";
+          mode = "${globals.defaultResolution}";
         };
       };
       bars = [
@@ -253,33 +253,33 @@
           position = "top";
           statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.home.homeDirectory}/.config/i3status-rust/config-default.toml";
           colors = {
-            statusline = "#${vars.colors.white}";
-            background = "#${vars.colors.black}";
-            separator = "#${vars.colors.yellow}";
+            statusline = "#${globals.colors.white}";
+            background = "#${globals.colors.black}";
+            separator = "#${globals.colors.yellow}";
             inactiveWorkspace = {
-              border = "#${vars.colors.brightblack}";
-              background = "#${vars.colors.xgray2}";
-              text = "#${vars.colors.white}";
+              border = "#${globals.colors.brightblack}";
+              background = "#${globals.colors.xgray2}";
+              text = "#${globals.colors.white}";
             };
             activeWorkspace = {
-              border = "#${vars.colors.yellow}";
-              background = "#${vars.colors.black}";
-              text = "#${vars.colors.yellow}";
+              border = "#${globals.colors.yellow}";
+              background = "#${globals.colors.black}";
+              text = "#${globals.colors.yellow}";
             };
             focusedWorkspace = {
-              border = "#${vars.colors.red}";
-              background = "#${vars.colors.black}";
-              text = "#${vars.colors.yellow}";
+              border = "#${globals.colors.red}";
+              background = "#${globals.colors.black}";
+              text = "#${globals.colors.yellow}";
             };
             urgentWorkspace = {
-              border = "#${vars.colors.red}";
-              background = "#${vars.colors.black}";
-              text = "#${vars.colors.red}";
+              border = "#${globals.colors.red}";
+              background = "#${globals.colors.black}";
+              text = "#${globals.colors.red}";
             };
             bindingMode = {
-              border = "#${vars.colors.green}";
-              background = "#${vars.colors.black}";
-              text = "#${vars.colors.white}";
+              border = "#${globals.colors.green}";
+              background = "#${globals.colors.black}";
+              text = "#${globals.colors.white}";
             };
           };
         }
@@ -305,7 +305,7 @@
           "Print" = "exec --no-startup-id grimshot --notify  save area /tmp/scrot-$(date \"+%Y-%m-%d\"T\"%H:%M:%S\").png";
         };
       colors = let
-        c = vars.colors;
+        c = globals.colors;
       in {
         focused = {
           background = "#${c.black}";
@@ -352,7 +352,7 @@
     terminal = "alacritty";
     theme = "srcery_rofi.rasi";
     # TODO theme it directly here
-    #theme = with vars.colors; {
+    #theme = with globals.colors; {
     #  "window" = {
     #    background = "#${black}";
     #    foreground = "#${brightwhite}";
@@ -365,7 +365,7 @@
   programs.swaylock = {
     enable = true;
     package = pkgs.swaylock-effects;
-    settings = with vars.colors; {
+    settings = with globals.colors; {
       color = "${black}";
       line-color = "${white}";
       ring-color = "${green}";
@@ -375,7 +375,7 @@
       layout-text-color = "${white}";
       indicator-radius = 100;
       font-size = 24;
-      font = "${vars.font}";
+      font = "${globals.font}";
       deamonize = true;
       clock = true;
       ignore-empty-password = true;
@@ -404,7 +404,7 @@
           {
             criteria = "Virtual-1";
             status = "enable";
-            mode = "${vars.defaultResolution}";
+            mode = "${globals.defaultResolution}";
             position = "0,0";
           }
         ];
@@ -417,9 +417,9 @@
     defaultTimeout = 5000;
     font = "Terminus 10";
     anchor = "top-right";
-    backgroundColor = "#${vars.colors.black}";
-    borderColor = "#${vars.colors.red}";
-    textColor = "#${vars.colors.brightwhite}";
+    backgroundColor = "#${globals.colors.black}";
+    borderColor = "#${globals.colors.red}";
+    textColor = "#${globals.colors.brightwhite}";
     borderRadius = 3;
     borderSize = 1;
     height = 200;

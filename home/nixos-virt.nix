@@ -1,19 +1,18 @@
-# This is your home-manager configuration file
-# Use this to configure your home environment (it replaces ~/.config/nixpkgs/home.nix)
 {
   inputs,
   outputs,
   lib,
   config,
   pkgs,
-  vars,
+  globals,
   ...
 }: let
   huj = builtins.trace "huj1234" "";
 in {
   imports = [
-    ./cli.nix
-    ./gui.nix
+    ./features/cli.nix
+    ./features/gui.nix
+    ./features/syncthing.nix
 
     # If you want to use modules your own flake exports (from modules/home-manager):
     # outputs.homeManagerModules.example
@@ -21,24 +20,17 @@ in {
     #inputs.nix-colors.homeManagerModules.default
   ];
   # shit didnt work fuck
-  #vars = import ./vars.nix;
+  #globals = import ./globals.nix;
 
   home = {
     username = "freiherr";
     homeDirectory = "/home/freiherr";
   };
 
-  # Add stuff for your user as you see fit:
-  # programs.neovim.enable = true;
   home.packages = with pkgs; [
-    # nix
     nix-output-monitor
     ddcutil
   ];
-
-  services.syncthing = {
-    enable = true;
-  };
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   home.stateVersion = "23.05";
@@ -64,7 +56,7 @@ in {
       # Disable if you don't want unfree packages
       allowUnfree = true;
       # Workaround for https://github.com/nix-community/home-manager/issues/2942
-      allowUnfreePredicate = _: true;
+      # allowUnfreePredicate = _: true;
     };
   };
 }

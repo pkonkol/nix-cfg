@@ -21,17 +21,25 @@
     vscode-server,
     ...
   } @ inputs: let
-    vars = import ./vars.nix;
+    globals = import ./globals.nix;
     inherit (self) outputs;
     # Supported systems for your flake packages, shell, etc.
     systems = [
       "aarch64-linux"
-      "i686-linux"
+      # "i686-linux"
       "x86_64-linux"
-      "aarch64-darwin"
-      "x86_64-darwin"
+      # "aarch64-darwin"
+      # "x86_64-darwin"
     ];
     pkgs = nixpkgs.legacyPackages.x86_64-linux;
+
+    lib = nixpkgs.lib // home-manager.lib;
+    pkgsFor = lib.genAttrs systems (system: import nixpkgs {
+      inherit system;
+      config.allowUnfree = true;
+    });
+    forEachSystem = f: lib.genAttrs systems (system: f pkgsFor.${system});
+
     # This is a function that generates an attribute by calling a function you
     # pass to it, with each system as an argument
     forAllSystems = nixpkgs.lib.genAttrs systems;
@@ -40,20 +48,29 @@
     nixosConfigurations = {
       nixos-virt = nixpkgs.lib.nixosSystem {
         specialArgs = {
-          inherit inputs outputs;
-          inherit vars;
+          inherit inputs outputs globals;
         };
         modules = [
-          ./nixos/configuration.nix
-
-          vscode-server.nixosModules.default
-          ({
-            config,
-            pkgs,
-            ...
-          }: {
+          ./hosts/nixos-virt
+          vscode-server.nixosModules.default ({ config, pkgs, ... }: {
             services.vscode-server.enable = true;
           })
+        ];
+      };
+      pc = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs outputs globals;
+        };
+        modules = [
+          ./hosts/pc
+        ];
+      };
+      closet = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs outputs globals;
+        };
+        modules = [
+          ./hosts/closet
         ];
       };
     };
@@ -62,34 +79,54 @@
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
       "freiherr@nixos-virt" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
         extraSpecialArgs = {
-          inherit vars;
-          inherit inputs outputs;
+          inherit inputs outputs globals;
         };
         modules = [
-          ./home-manager/home.nix
+          ./home/nixos-virt.nix
         ];
       };
+      "freiherr@pc" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        extraSpecialArgs = {
+          inherit inputs outputs globals;
+        };
+        modules = [
+          ./home/pc.nix
+        ];
+      };
+      "freiherr@closet" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        extraSpecialArgs = {
+          inherit inputs outputs globals;
+        };
+        modules = [
+          ./home/closet.nix
+        ];
+      };
+      # TODO local non-nixos deployment for any username/hostname specified
     };
-    # or with nix develop .#test : test = pkgs.mkShell {
-    devShells.x86_64-linux.default = pkgs.mkShell {
-      NIX_CONFIG = "extra-experimental-features = nix-command flakes repl-flake";
-      nativeBuildInputs = with pkgs; [
-        nix
-        pkgs.home-manager
-        git
+    devShells = forEachSystem (pkgs: import ./shell.nix { inherit pkgs; });
+    # # or with nix develop .#test : test = pkgs.mkShell {
+    # devShells.x86_64-linux.default = pkgs.mkShell {
+    #   NIX_CONFIG = "extra-experimental-features = nix-command flakes repl-flake";
+    #   nativeBuildInputs = with pkgs; [
+    #     nix
+    #     alejandra
+    #     pkgs.home-manager
+    #     git
 
-        sops
-        ssh-to-age
-        gnupg
-        age
+    #     sops
+    #     ssh-to-age
+    #     gnupg
+    #     age
 
-        neovim
-        ranger
-        tmux
-      ];
-    };
+    #     neovim
+    #     ranger
+    #     tmux
+    #   ];
+    # };
 
     # Your custom packages
     # Acessible through 'nix build', 'nix shell', etc
