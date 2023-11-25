@@ -6,8 +6,7 @@
   pkgs,
   globals,
   ...
-}: 
-{
+}: {
   imports = [
     ./features/cli.nix
     ./features/syncthing.nix
