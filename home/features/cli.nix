@@ -200,7 +200,7 @@
       terminus
       gruvbox
       srcery-vim
-      (nvim-treesitter.withPlugins _:pkgs.tree-sitter.allGrammars)
+      (nvim-treesitter.withPlugins (_:pkgs.tree-sitter.allGrammars))
       nvim-web-devicons
       {
         plugin = nvim-tree-lua;

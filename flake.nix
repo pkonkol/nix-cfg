@@ -3,7 +3,6 @@
 
   inputs = {
     # TODO for btrfs
-    # impermanence.url = "github:nix-community/impermanence";
 
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -11,6 +10,7 @@
     home-manager.url = "github:nix-community/home-manager/release-23.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    impermanence.url = "github:nix-community/impermanence";
     hardware.url = "github:nixos/nixos-hardware";
     vscode-server.url = "github:nix-community/nixos-vscode-server";
   };
@@ -19,6 +19,7 @@
     self,
     nixpkgs,
     home-manager,
+    impermanence,
     vscode-server,
     ...
   } @ inputs: let
@@ -92,6 +93,14 @@
         };
         modules = [
           ./hosts/closet
+          vscode-server.nixosModules.default
+          ({
+            config,
+            pkgs,
+            ...
+          }: {
+            services.vscode-server.enable = true;
+          })
         ];
       };
     };
