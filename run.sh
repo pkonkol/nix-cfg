@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-sudo nixos-rebuild switch --flake .#nixos-virt
-home-manager switch --flake .#freiherr@nixos-virt
+sudo nixos-rebuild switch --flake .#changeme --impure # TODO get rid of the impure
+home-manager switch --flake .#freiherr@changeme

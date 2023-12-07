@@ -17,6 +17,18 @@
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.initrd.network.enable = true;
+  boot.initrd.availableKernelModules = [ "e1000e" ];
+  boot.kernelParams = [ "ip=dhcp" ];
+  boot.initrd.network.ssh = {
+    enable = true;
+    port = 22;
+    shell = "/bin/cryptsetup-askpass";
+    authorizedKeys = [
+      "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDFtOoE+UsKcjaWezmo7tIQnRjbO6D0MxVug5gCr15u1LYrE1Sxc0YjmR+6hqmX+0NiQEntbSBscTEbcjsl7TaaO70HKQqgcQ1Wq0BFzrXN/FrZKE1gWHR/dreupqNVkOIxTuXt6kr8vJ8fgh9NH9phQr9TWUt+YIj5f7d8883NkD1LUW+OI6IoE7rJPVd0vjJfMRQHrqFXzSrkymTcuciAqzJnnMMQQQe/VgWoTlH6s828UcWSDUa63/IxdLWoV2k2IcKMS18E7eFxeXZNU6z0ritP05auWUSMa0nm/Az4ptrqopW9C2G0biY8NVOUwk4DgKxXppniEOnR70wua5zYeUETSYo5TvvahQd621bttLSEf65CHFgceGy91tNmDOTTG8NM9Msil8i/x6tWKpiJZzWn1W25SZpaQmHGdLwDrwWFU21SgGMnT8LjfsU4cBu3JFkwQ59JyEqKmp/Nqdjp70UyLxxPiLpDmfSVFtHYA/p5ikAxLncRE+Bmq5R3Cz8="
+    ];
+    hostKeys = [ "/etc/ssh/ssh_host_rsa_key" "/etc/ssh/ssh_host_ed25519_key" ];
+  };
   users.mutableUsers = true; # this leads to resetting passwords on false
   users.users.root.initialHashedPassword = "$y$j9T$mJM1hfZT7rxiIl1yXOyGD1$ZVgPYR2ADNOzBbUMqFtA8M6Ms0SuvEr7AILl8vTuvoA";
 
@@ -42,15 +54,6 @@
       ];
       extraGroups = ["wheel" "video" "audio" "docker" "networkmanager" "pipewire" "i2c"];
     };
-    homelab = {
-      initialPassword = "changeme";
-      isNormalUser = true;
-      shell = pkgs.fish;
-      openssh.authorizedKeys.keys = [
-        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDFtOoE+UsKcjaWezmo7tIQnRjbO6D0MxVug5gCr15u1LYrE1Sxc0YjmR+6hqmX+0NiQEntbSBscTEbcjsl7TaaO70HKQqgcQ1Wq0BFzrXN/FrZKE1gWHR/dreupqNVkOIxTuXt6kr8vJ8fgh9NH9phQr9TWUt+YIj5f7d8883NkD1LUW+OI6IoE7rJPVd0vjJfMRQHrqFXzSrkymTcuciAqzJnnMMQQQe/VgWoTlH6s828UcWSDUa63/IxdLWoV2k2IcKMS18E7eFxeXZNU6z0ritP05auWUSMa0nm/Az4ptrqopW9C2G0biY8NVOUwk4DgKxXppniEOnR70wua5zYeUETSYo5TvvahQd621bttLSEf65CHFgceGy91tNmDOTTG8NM9Msil8i/x6tWKpiJZzWn1W25SZpaQmHGdLwDrwWFU21SgGMnT8LjfsU4cBu3JFkwQ59JyEqKmp/Nqdjp70UyLxxPiLpDmfSVFtHYA/p5ikAxLncRE+Bmq5R3Cz8="
-      ];
-      extraGroups = ["wheel" "video" "audio" "docker" "sway" "pipewire" "i2c"];
-    };
   };
 
   services.openssh = {
@@ -71,6 +74,8 @@
   services.xserver.desktopManager.plasma5.enable = true;
 
   environment.systemPackages = with pkgs; [ 
+    pciutils
+    rnix-lsp
     neovim
     ranger
     tmux
