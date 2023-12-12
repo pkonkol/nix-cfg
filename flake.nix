@@ -36,10 +36,6 @@
         import ./shell.nix {inherit pkgs;}
     );
 
-    # Your custom packages
-    # Acessible through 'nix build', 'nix shell', etc
-    packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
-
     # Formatter for your nix files, available through 'nix fmt'
     # Other options beside 'alejandra' include 'nixpkgs-fmt'
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
@@ -56,10 +52,11 @@
     #     buildInputs = with pkgs; [ your-package1 your-package2 ... ];
     #   };
     # });
-
     overlays = import ./overlays {inherit inputs;};
-    nixosModules = import ./modules/nixos;
-    homeManagerModules = import ./modules/home-manager;
+
+
+    nixosModules = import ./nixos/modules;
+    homeManagerModules = import ./home/modules;
 
     # Available through 'nixos-rebuild --flake .#your-hostname'
     nixosConfigurations = {
@@ -136,26 +133,15 @@
           ./home/closet.nix
         ];
       };
-      # TODO local non-nixos deployment for any username/hostname specified
+      "non-nixos" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        extraSpecialArgs = {
+          inherit inputs outputs globals;
+        };
+        modules = [
+          ./home/non-nixos.nix
+        ];
+      };
     };
-    # # or with nix develop .#test : test = pkgs.mkShell {
-    # devShells.x86_64-linux.default = pkgs.mkShell {
-    #   NIX_CONFIG = "extra-experimental-features = nix-command flakes repl-flake";
-    #   nativeBuildInputs = with pkgs; [
-    #     nix
-    #     alejandra
-    #     pkgs.home-manager
-    #     git
-
-    #     sops
-    #     ssh-to-age
-    #     gnupg
-    #     age
-
-    #     neovim
-    #     ranger
-    #     tmux
-    #   ];
-    # };
   };
 }

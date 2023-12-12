@@ -12,7 +12,6 @@ in {
   imports = [
     ./features/cli.nix
     ./features/gui.nix
-    ./features/syncthing.nix
 
     # If you want to use modules your own flake exports (from modules/home-manager):
     # outputs.homeManagerModules.example

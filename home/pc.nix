@@ -10,7 +10,6 @@
   imports = [
     ./features/cli.nix
     ./features/gui.nix
-    ./features/syncthing.nix
   ];
 
   home = {

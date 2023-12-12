@@ -1,7 +1,6 @@
-{
-  pkgs,
-  globals,
-  ...
+{ pkgs
+, globals
+, ...
 }: {
   home.shellAliases = rec {
     e = "nvim";
@@ -16,6 +15,7 @@
     ranger
     tmux
     pkgs.unstable.eza
+    cht-sh
     #exa
     jq
     bat
@@ -35,6 +35,8 @@
     gawk
     zstd
     neofetch
+    fontconfig
+    nerdfonts
     # archives
     zip
     xz
@@ -88,8 +90,6 @@
     ncmpcpp.enable = true;
     mpv.enable = true;
     go.enable = true;
-    chromium.enable = true;
-    firefox.enable = true;
   };
 
   programs.fzf = {
@@ -97,7 +97,6 @@
     tmux.enableShellIntegration = true;
   };
 
-  # TODO change to eza, but home-manager has it on master not release-23.05
   programs.exa = {
     package = pkgs.unstable.eza;
     enable = true;
@@ -156,11 +155,12 @@
     };
     shellInit = ''
       fish_vi_key_bindings
+      source /home/user/.nix-profile/etc/profile.d/nix.fish
     '';
   };
 
   programs.atuin = {
-    enable = false;
+    enable = true;
   };
 
   programs.tmux = {

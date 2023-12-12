@@ -14,6 +14,7 @@
   default = pkgs.mkShell {
     NIX_CONFIG = "extra-experimental-features = nix-command flakes repl-flake";
     nativeBuildInputs = with pkgs; [
+      fish
       nix
       home-manager
       git
@@ -23,6 +24,10 @@
       ssh-to-age
       gnupg
       age
+
+      neovim
+      ranger
+      tmux
     ];
     shellHook = ''
       fish

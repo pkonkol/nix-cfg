@@ -9,7 +9,6 @@
 }: {
   imports = [
     ./features/cli.nix
-    ./features/syncthing.nix
   ];
 
   programs.git.extraConfig = {
